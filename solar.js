@@ -1,4 +1,4 @@
-var solar = function() { //helloooooooo
+var solar = function() {
   this.map;
   this.geocoder;
   this.arrayArea;
