@@ -155,7 +155,7 @@ solar.prototype = {
 
     var opt3 = {};
     opt3.Id = "optAddCircle";
-    opt3.JSfun = "s.CheckForTrees(0,false)";
+    opt3.JSfun = "s.CheckForTrees(0,false, true)";
     opt3.Text = "Add Trees";
     this.ViewOpts.push(opt3);
 
@@ -553,7 +553,7 @@ solar.prototype = {
     var hEave = h_House - Math.tan(sTilt) * roofLength;
     arrayDetails.roofLength = roofLength;
     arrayDetails.hEave = hEave;
-    
+
     var treeEqn = function(corner, treeNum) {
       
       // qEave: Is the corner at the eave? 
@@ -582,27 +582,27 @@ solar.prototype = {
 
 
       if (r_Tree / dFromTree > 1) {
-      	var fullyShaded = [];
-	    	for (var j = 0; j < 8760; j++)
-	      		fullyShaded.push(0);  
-	    return fullyShaded;    	
+        var fullyShaded = [];
+        for (var j = 0; j < 8760; j++)
+            fullyShaded.push(0);  
+      return fullyShaded;     
       }
 
 
       var Az_A = Math.asin(r_Tree / dFromTree) + Az_B;
-      	if (Az_A < 0)
-      		Az_A = Az_A + Math.PI;
+        if (Az_A < 0)
+          Az_A = Az_A + Math.PI;
       var Az_C = Az_B - Math.asin(r_Tree / dFromTree);
-      	if (Az_C < 0)
-      		Az_C = Az_C + Math.PI;
+        if (Az_C < 0)
+          Az_C = Az_C + Math.PI;
 
       var Az_TrkR = Math.asin(r_Trk / dFromTree) + Az_B;
-      	if (Az_TrkR < 0)
-      		Az_TrkR = Az_TrkR + Math.PI;
+        if (Az_TrkR < 0)
+          Az_TrkR = Az_TrkR + Math.PI;
 
       var Az_TrkL = Az_B - Math.asin(r_Trk / dFromTree);
-      	if (Az_TrkL < 0)
-      		Az_TrkL = Az_TrkL + Math.PI;
+        if (Az_TrkL < 0)
+          Az_TrkL = Az_TrkL + Math.PI;
 
       var cirCenterX = (Az_A - Az_C) / 2 + Az_C; // y-center pt of the circle 
       var cirCenterY = (El_B - El_D) / 2 + El_D; // x-center pt of the circle 
@@ -630,12 +630,13 @@ solar.prototype = {
       return shadedOrNot;
     }
     
+    
     var treeNumber = s.detailsCircle.length;
     for(k = 0; k < treeNumber; k++) {
-      corner1.shadingTree.push(treeEqn(corner1, k));
-      corner2.shadingTree.push(treeEqn(corner2, k)); 
-      corner3.shadingTree.push(treeEqn(corner3, k)); 
-      corner4.shadingTree.push(treeEqn(corner4, k));
+      corner1.shadingTree.push(treeEqn(corner1, k, arrayNumber));
+      corner2.shadingTree.push(treeEqn(corner2, k, arrayNumber)); 
+      corner3.shadingTree.push(treeEqn(corner3, k, arrayNumber)); 
+      corner4.shadingTree.push(treeEqn(corner4, k, arrayNumber));
     }
 
     // Create a counter called treeAccount that determines which tree is 
@@ -695,6 +696,121 @@ solar.prototype = {
     return withShading/s.noShading[arrayNumber] * 100;
 
   },
+
+  treeEqnAddTree: function(corner, treeNum, arrayNum) {  
+   
+    if (corner.qEave == 1) {
+      var hPoint = s.arrayProp[arrayNum].hEave;
+    } else {
+      var hPoint = s.buildingHeight;
+    }
+
+    var h_Tree = s.detailsCircle[treeNum].TreeHeight;
+    var latTree = s.detailsCircle[treeNum].treeCoordinates.lat;
+    var lonTree = s.detailsCircle[treeNum].treeCoordinates.lon;
+    var dFromTree = s.distance(lonTree, latTree, corner.lon, corner.lat);
+    var r_Tree = s.detailsCircle[treeNum].treeCoordinates.radius;
+    var r_Trk = s.detailsCircle[treeNum].treeCoordinates.trunkRadius; 
+
+    // Elevation of tree relative to point...X
+    var El_A = Math.atan((h_Tree - r_Tree - hPoint) / dFromTree);
+    var El_C = El_A;
+    var El_B = Math.atan((h_Tree - hPoint) / dFromTree);
+    var El_D = Math.atan((h_Tree - 2 * r_Tree - hPoint) / dFromTree); // break point here
+
+    // Method to find azimuth, relative to each corner of the array 
+    var Az_B = s.findAzimuth(corner.lon, corner.lat, lonTree, latTree);
+    var Az_D = Az_B;
+
+
+    if (r_Tree / dFromTree > 1) {
+      var fullyShaded = [];
+      for (var j = 0; j < 8760; j++)
+          fullyShaded.push(0);  
+    return fullyShaded;     
+    }
+
+
+    var Az_A = Math.asin(r_Tree / dFromTree) + Az_B;
+      if (Az_A < 0)
+        Az_A = Az_A + Math.PI;
+    var Az_C = Az_B - Math.asin(r_Tree / dFromTree);
+      if (Az_C < 0)
+        Az_C = Az_C + Math.PI;
+
+    var Az_TrkR = Math.asin(r_Trk / dFromTree) + Az_B;
+      if (Az_TrkR < 0)
+        Az_TrkR = Az_TrkR + Math.PI;
+
+    var Az_TrkL = Az_B - Math.asin(r_Trk / dFromTree);
+      if (Az_TrkL < 0)
+        Az_TrkL = Az_TrkL + Math.PI;
+
+    var cirCenterX = (Az_A - Az_C) / 2 + Az_C; // y-center pt of the circle 
+    var cirCenterY = (El_B - El_D) / 2 + El_D; // x-center pt of the circle 
+    var cirRadius = ((El_B - El_D) / 2 + (Az_A - Az_C) / 2) / 2; // radius of circle 
+
+    var withShading = 0;
+    var shadedOrNot = [];
+
+    for (var j = 0; j < 8760; j++) {
+      var Az = s.arrayProp[arrayNum].azimuth[j]; 
+      var El = s.arrayProp[arrayNum].elevation[j]; 
+        if ((Az - cirCenterX) * (Az - cirCenterX) + (El - cirCenterY) * (El - cirCenterY) <= cirRadius * cirRadius) {
+        shadedOrNot.push(0);
+
+      } else if (Az > Az_TrkL && Az < Az_TrkR && El < El_D) {
+        // Shadow of the tree trunk 
+        shadedOrNot.push(0);
+
+      } else { 
+      // doesn't fall into the shade region
+        shadedOrNot.push(1);
+      }
+    }
+
+    return shadedOrNot;
+
+
+  },
+
+  addTreeShade: function() {
+
+    var treeNum = s.detailsCircle.length - 1;
+
+    for(var i = 0; i < s.arrayProp.length; i++) {
+
+      var arrayDetails = s.arrayProp[i];
+      var corner1 = arrayDetails.corners[0];
+      var corner2 = arrayDetails.corners[1];
+      var corner3 = arrayDetails.corners[2];
+      var corner4 = arrayDetails.corners[3];
+
+      // Find out how the new tree affects each corner
+
+      // there is no such equation called treeEqn!!!----------------------------
+      corner1.shadingTree.push(s.treeEqn(corner1, treeNum, i));
+      corner2.shadingTree.push(s.treeEqn(corner2, treeNum, i)); 
+      corner3.shadingTree.push(s.treeEqn(corner3, treeNum, i)); 
+      corner4.shadingTree.push(s.treeEqn(corner4, treeNum, i));
+
+      arrayDetails.treeAccount.push(1);
+
+      // Recompute the solar access number of each corner 
+      corner1.SolarAccess = s.evaluateShading(corner1, arrayDetails.totIrradiance, arrayDetails.totDiffIrrad, arrayDetails.treeAccount, i);   
+      corner2.SolarAccess = s.evaluateShading(corner2, arrayDetails.totIrradiance, arrayDetails.totDiffIrrad, arrayDetails.treeAccount, i);  
+      corner3.SolarAccess = s.evaluateShading(corner3, arrayDetails.totIrradiance, arrayDetails.totDiffIrrad, arrayDetails.treeAccount, i);  
+      corner4.SolarAccess = s.evaluateShading(corner4, arrayDetails.totIrradiance, arrayDetails.totDiffIrrad, arrayDetails.treeAccount, i);  
+
+      s.arrayDetails.corner[0] = corner1;
+      s.arrayDetails.corner[1] = corner2;
+      s.arrayDetails.corner[2] = corner3;
+      s.arrayDetails.corner[3] = corner4;
+      s.arrayProp[i] = arrayDetails;
+
+    }
+  },
+
 
   getUrlVars: function() {
     var vars = [],
@@ -1279,9 +1395,9 @@ solar.prototype = {
 
     this.generateDiv();
 
-
-
+  if(isEdit != "E")
     this.CheckForTrees(this.arrIndex, false);
+
   },
   ConfirmNoTrees: function() {
     var control = $("#dvTrees");
@@ -1308,11 +1424,15 @@ solar.prototype = {
     //s.generateDiv();
 
   },
-  CheckForTrees: function(index, isEdit) {
+  CheckForTrees: function(index, isEdit, isAdd) {
 
     if (isEdit) {
       $("#dvTreesText").html('Any more trees?');
     } else $("#dvTreesText").html('Are there trees around the house that can cause shading factor??');
+
+    if (isAdd)
+      s.addTreeShade();
+
     var control = $("#dvTrees");
     this.calculatePosition(control);
     this.setDisplay('dvTrees');
@@ -1486,7 +1606,7 @@ solar.prototype = {
     this.calculatePosition(control);
     this.setDisplay('dvTreeHeight')
 
-    s.CheckForTrees(s.arrIndex, true);
+    s.CheckForTrees(s.arrIndex, true, false);
     $("#txtTreeHeight").val('');
     s.buildingHeight = $("#txtBuildingHeight").val();
   },
