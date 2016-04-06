@@ -2004,8 +2004,8 @@ solar.prototype = {
 
 }
 var panelTypes = {
-  p270: {
-    name: 270,
+  p275: {
+    name: 275,
     panelWidth: 3.28,
     panelHeight: 5.5,
     panelGap: 0.0833962
@@ -2016,18 +2016,17 @@ var panelTypes = {
     panelHeight: 5.5,
     panelGap: 0.0833969
   },
-  p325: {
-    name: 325,
+  p285: {
+    name: 285,
+    panelWidth: 3.28,
+    panelHeight: 5.5,
+    panelGap: 0.0833969
+  },
+  p320: {
+    name: 320,
     panelWidth: 3.28,
     panelHeight: 6.54,
     panelGap: 0.0833976
-  },
-  p365: {
-    name: 365,
-    panelWidth: 3.28,
-    panelHeight: 6.43,
-    panelGap: 0.0833983
   }
-
 };
 var s = new solar();

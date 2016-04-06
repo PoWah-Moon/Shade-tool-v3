@@ -36,9 +36,10 @@
 <div id="ddPanel"><div class="dvText">Select Panel Type</div>
 	<div class="arrow-down floatRight"><span class="spnArrowDown"></span></div>
 	<div class = "dropDownOptionsDiv" id="myddOptsPanel" style="display:block">
-        	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p270');">SolarWorld 270</div>
+        	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p275');">SolarWorld 275</div>
     		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p280');">SolarWorld 280</div>
-    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p325');">SolarWorld 325 (commercial)</div>    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p365');">LG 365</div>
+    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p285');">SolarWorld 285</div>
+    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p320');">SolarWorld 320 (commercial)</div>    
 	</div>	
 	
 </div>
