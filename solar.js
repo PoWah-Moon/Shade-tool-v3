@@ -636,17 +636,12 @@ solar.prototype = {
     var r_Tree = s.detailsCircle[treeNum].treeCoordinates.radius;
     var r_Trk = s.detailsCircle[treeNum].treeCoordinates.trunkRadius; 
 
-    // Elevation of tree relative to point...X
-    var El_A = Math.atan((h_Tree - r_Tree - hPoint) / dFromTree);
-    var El_C = El_A;
-    var El_B = Math.atan((h_Tree - hPoint) / dFromTree);
-    var El_D = Math.atan((h_Tree - 2 * r_Tree - hPoint) / dFromTree); // break point here
+    // Azimuth and elevation of the center of the tree sphere
+    var El_TRcenter = Math.atan((h_Tree - r_Tree - hPoint) / dFromTree);
+    var Az_TRcenter = s.findAzimuth(corner.lon, corner.lat, lonTree, latTree);
+    var El_TRbottom = Math.atan((h_Tree - 2 * r_Tree - hPoint) / dFromTree); 
 
-    // Method to find azimuth, relative to each corner of the array 
-    var Az_B = s.findAzimuth(corner.lon, corner.lat, lonTree, latTree);
-    var Az_D = Az_B;
-
-
+    // If the corner of the array falls in the circle of the tree, then assume fully shaded
     if (r_Tree / dFromTree > 1) {
       var fullyShaded = [];
       for (var j = 0; j < 8760; j++)
@@ -654,36 +649,31 @@ solar.prototype = {
     return fullyShaded;     
     }
 
+    var sinGamma = r_Tree / dFromTree;
+    var withShading = 0;
+    var shadedOrNot = [];
 
-    var Az_A = Math.asin(r_Tree / dFromTree) + Az_B;
-      if (Az_A < 0)
-        Az_A = Az_A + Math.PI;
-    var Az_C = Az_B - Math.asin(r_Tree / dFromTree);
-      if (Az_C < 0)
-        Az_C = Az_C + Math.PI;
-
-    var Az_TrkR = Math.asin(r_Trk / dFromTree) + Az_B;
+    var Az_TrkR = Math.asin(r_Trk / dFromTree) + Az_TRcenter;
       if (Az_TrkR < 0)
         Az_TrkR = Az_TrkR + Math.PI;
 
-    var Az_TrkL = Az_B - Math.asin(r_Trk / dFromTree);
+    var Az_TrkL = Az_TRcenter - Math.asin(r_Trk / dFromTree);
       if (Az_TrkL < 0)
         Az_TrkL = Az_TrkL + Math.PI;
-
-    var cirCenterX = (Az_A - Az_C) / 2 + Az_C; // y-center pt of the circle 
-    var cirCenterY = (El_B - El_D) / 2 + El_D; // x-center pt of the circle 
-    var cirRadius = ((El_B - El_D) / 2 + (Az_A - Az_C) / 2) / 2; // radius of circle 
-
-    var withShading = 0;
-    var shadedOrNot = [];
 
     for (var j = 0; j < 8760; j++) {
       var Az = arrayDetails.azimuth[j]; 
       var El = arrayDetails.elevation[j]; 
-        if ((Az - cirCenterX) * (Az - cirCenterX) + (El - cirCenterY) * (El - cirCenterY) <= cirRadius * cirRadius) {
+
+      var Az_offset = Az - Az_TRcenter;
+      var El_offset = El - El_TRcenter;
+
+      var circEqn = (Math.sin(Az_offset)*Math.sin(Az_offset) * Math.cos(El_offset)*Math.cos(El_offset) + Math.sin(El_offset)*Math.sin(El_offset));
+
+        if ((circEqn <= sinGamma*sinGamma) && (Math.abs(Az_offset) < Math.PI / 2)) {
         shadedOrNot.push(0);
 
-      } else if (Az > Az_TrkL && Az < Az_TrkR && El < El_D) {
+      } else if (Az > Az_TrkL && Az < Az_TrkR && El < El_TRbottom) {
         // Shadow of the tree trunk 
         shadedOrNot.push(0);
 
@@ -694,7 +684,6 @@ solar.prototype = {
     }
 
     return shadedOrNot;
-
 
   },
 
@@ -1467,8 +1456,8 @@ solar.prototype = {
       map: s.map,
       center: cntr,
       radius: s.treesRadius,
-      editable: true,
-      draggable: true
+      editable: false,
+      draggable: false
 
 
     };
@@ -1502,32 +1491,8 @@ solar.prototype = {
 
 
     var circleIndex = len;
-    google.maps.event.addListener(Circle, 'click', function(event) {
-      this.setOptions({
-        strokeWeight: 1.0,
-        fillColor: 'white'
-      });
-      this.crclinfoWindow = new google.maps.InfoWindow();
+    //removed delete tree function on map 
 
-
-      var str = "<div class='infoText' style='width:200px'><button class='buttonCircleDelete' onclick='s.chkForCircleEdit(" + (circleIndex) + ")'>Edit</button>&nbsp;&nbsp;<button class='buttonCircleDelete' onclick='s.chkForCirlceDelete(" + (circleIndex) + ")'>Delete</button></div>";
-      //alert(str);
-      this.crclinfoWindow.setContent(str);
-
-      this.crclinfoWindow.setPosition(event.latLng);
-      this.crclinfoWindow.open(s.map);
-      Circle.infoWindow = this.crclinfoWindow;
-      //map.openInfoWindowHtml(event,'Test'); 
-      google.maps.event.addListener(Circle.infoWindow, 'closeclick', function(poly) {
-
-        Circle.setOptions({
-          strokeWeight: 1.0,
-          fillColor: '#404040'
-        });
-      });
-
-
-    });
     //var Crcl = new google.maps.Circle(opts);
     Circle.setMap(s.map);
     if (!s._editTree) {
@@ -1648,14 +1613,7 @@ solar.prototype = {
     cir = null;
 
   },
-  chkForCirlceDelete: function(circleIndex) {
-    var crcl = s.detailsCircle[circleIndex - 1].Circle;
-    crcl.infoWindow.close();
-    this.crclinfoWindow = null;
-    s.DeleteTree(circleIndex - 1);
-
-
-  },
+// removed function here
   DeleteTree: function(circleIndex) {
     var crcl = s.detailsCircle[circleIndex].Circle;
     s.detailsCircle.pop(circleIndex);
@@ -1669,6 +1627,7 @@ solar.prototype = {
     s.generateDiv();
 	  
   },
+
   setEditDelete: function(circleIndex, Crcl) {
     //var len=arrayInfo.Panels.length-1;
 
@@ -2022,8 +1981,8 @@ var panelTypes = {
     panelHeight: 5.5,
     panelGap: 0.0833969
   },
-  p320: {
-    name: 320,
+  p315: {
+    name: 315,
     panelWidth: 3.28,
     panelHeight: 6.54,
     panelGap: 0.0833976

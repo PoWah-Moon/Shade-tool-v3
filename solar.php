@@ -39,7 +39,7 @@
         	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p275');">SolarWorld 275</div>
     		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p280');">SolarWorld 280</div>
     		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p285');">SolarWorld 285</div>
-    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p320');">SolarWorld 320 (commercial)</div>    
+    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p320');">SolarWorld 315 (C)</div>    
 	</div>	
 	
 </div>
@@ -139,7 +139,7 @@
 <div id="dvTreeHeight">
 	<div style="width:83%" class="dvFloatLeft">Provide the height of the tree in feet</div>
 	
-	<div style="width:15%"class="dvFloatLeft"><input type="text" id="txtTreeHeight" maxlength="4" style="width:80%"/></div>
+	<div style="width:15%" class="dvFloatLeft"><input type="text" id="txtTreeHeight" maxlength="4" style="width:80%"/></div>
 	<div style="width:83%;margin-top:2px;" class="dvFloatLeft">Provide the height of the building in feet</div>
 	
 	<div style="width:15%;margin-top:2px;"class="dvFloatLeft"><input type="text" id="txtBuildingHeight" maxlength="4" style="width:80%"/></div>	
