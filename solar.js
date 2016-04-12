@@ -53,6 +53,9 @@ var solar = function() {
 
   this.init();
 
+  // Variables for adding markers to our trees
+  this.labelIndex = 0;
+  this.labels = '123456789';
 }
 solar.prototype = {
   init: function() {
@@ -1500,6 +1503,22 @@ solar.prototype = {
     }
 
     s._editTree = false;
+
+
+    //Place a marker at the middle of the circle
+
+    function addMarker(location, map)
+    {
+        // Add the marker at the clicked location, and add the next-available label
+        // from the array of alphabetical characters.
+        var marker = new google.maps.Marker({
+        position: location,
+        label: s.labels[s.labelIndex++ % s.labels.length],
+        map: map
+      });
+    }
+
+    addMarker(cntr, this.map);
     //s.generateDiv();
   },
   setTreeHeight: function() {
