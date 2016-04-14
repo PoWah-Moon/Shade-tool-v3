@@ -1111,8 +1111,6 @@ solar.prototype = {
     }
     return inner;
   },
-  /* Currently has code that has another button for editing the tree 
-    height BUT does not implement anything yet! Only a dummy button */
   generateDiv: function() {
 
     var totPanels = 0;
@@ -1177,9 +1175,9 @@ solar.prototype = {
           ];
           var treeDetails = ['<div class="padBot3">',
             '<div><span style="width:100px;float:left;margin-top:9px;"> Height :', treeDetails.TreeHeight,
-            '</span><button id="btnTreeHeightEdit', x, '" class="marginLeft10 buttonDiv btn">',
-            'Edit Height',
-            '</button><button id="btnTreeDelete"', x, '" onclick="javascript:s.DeleteTree(',x,')" class = marginRt buttonDiv btn" >' , 'Remove', '</button></div>',
+            '</span><button id="btnTreeDelete', x, '" onclick="javascript:s.DeleteTree(', x, ')" class="marginRt buttonDiv btn">',
+            'Remove',
+            '</button></div>',
             '</div>'
           ];
           tempHTML.push(trees.join(''));
@@ -1989,10 +1987,6 @@ and shifts the rest of the trees to reflect the deletion. */
         }
       }
     }
-  },
-
-  editTreeHeight: function(treeHeight){
-    tree.TreeHeight = treeHeight;
   }
 
 
