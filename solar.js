@@ -56,6 +56,7 @@ var solar = function() {
   // Variables for adding markers to our trees
   this.labelIndex = 0;
   this.labels = '123456789';
+  this.aoTreeMarkers = [];
 }
 solar.prototype = {
   init: function() {
@@ -304,7 +305,7 @@ solar.prototype = {
     google.maps.event.addListener(autoComplete, 'place_changed', function() {
       var place = autoComplete.getPlace();
       /*if (!place.geometry) {
-      	return;
+        return;
       }*/
       tempmap.setCenter(place.geometry.location);
       tempmap.setZoom(22);
@@ -760,7 +761,7 @@ solar.prototype = {
 
     this.setDisplay('infoAdd');
     google.maps.event.addListener(this.map, 'click', this.validateClick);
-    //google.maps.event.addListener(solarArray, 'polygonComplete', resetData);	 
+    //google.maps.event.addListener(solarArray, 'polygonComplete', resetData);   
   },
   addPoint: function(lon, lat) {
     var cntr = new google.maps.LatLng(lat, lon);
@@ -1059,12 +1060,12 @@ solar.prototype = {
     if (s.details !== null && s.details !== undefined) {
 
       /*for(var j=0;j<s.details[index].Circle.length;j++){
-      		var t=s.details[index].Circle[j];
-      		var crcl=t.Circle;
-      		if(t!=null){	s.editTree(t,j+1,index,true);
-      			
-      		}
-      		
+          var t=s.details[index].Circle[j];
+          var crcl=t.Circle;
+          if(t!=null){  s.editTree(t,j+1,index,true);
+            
+          }
+          
       }*/
     }
   },
@@ -1513,9 +1514,11 @@ solar.prototype = {
         // from the array of alphabetical characters.
         var marker = new google.maps.Marker({
         position: location,
-        label: s.labels[s.labelIndex++ % s.labels.length],
+        label: s.labels[s.labelIndex % s.labels.length],
         map: map
       });
+        s.aoTreeMarkers[s.labelIndex] = marker;
+        s.labelIndex++;
     }
 
     addMarker(cntr, this.map);
@@ -1632,25 +1635,33 @@ solar.prototype = {
     cir = null;
 
   },
-// removed function here
+
+/* Deletes the circle and the marker associated with the selected tree 
+and shifts the rest of the trees to reflect the deletion. */
   DeleteTree: function(circleIndex) {
     var crcl = s.detailsCircle[circleIndex].Circle;
-    s.detailsCircle.pop(circleIndex);
+    s.detailsCircle.splice(circleIndex,1);
     crcl.setMap(null);
     crcl = null;
 
     for (i = 0; i < s.arrayProp.length; i++) {
-    	s.arrayProp[i].treeAccount[circleIndex] = 0;	
-    }	
+      s.arrayProp[i].treeAccount[circleIndex] = 0;  
+    } 
+
+    /* Delete the numbered marker associated with the tree */
+    s.aoTreeMarkers[circleIndex].setMap(null);
+    s.aoTreeMarkers.splice(circleIndex,1);
+    s.labelIndex--;
+
+    /* Update the labels of all other markers */
+    for(var j = circleIndex; circleIndex < s.aoTreeMarkers.length; j++)
+        s.aoTreeMarkers[j].setLabel((j+1).toString());
 
     s.generateDiv();
-	  
   },
 
   setEditDelete: function(circleIndex, Crcl) {
     //var len=arrayInfo.Panels.length-1;
-
-
   },
 
   grabArray: function() {
@@ -1827,12 +1838,12 @@ solar.prototype = {
 
     /*-----------------------------
        ARRAY DEFINITION
-    	  - array[0]... filled with row arrays corresponding to rows of panels
-    	  - ROW ARRAYS:
-    		- row[0] holds the excess space (a partial panel width) left over after fitting panels on the row
-    		- row[1]... hold arrays for each panel
-    		- PANEL ARRAYS:
-    		  - 2-d array of coordinates for each corner
+        - array[0]... filled with row arrays corresponding to rows of panels
+        - ROW ARRAYS:
+        - row[0] holds the excess space (a partial panel width) left over after fitting panels on the row
+        - row[1]... hold arrays for each panel
+        - PANEL ARRAYS:
+          - 2-d array of coordinates for each corner
     -------------------------------*/
 
     var arrayHeight;
@@ -1954,7 +1965,7 @@ solar.prototype = {
     var brng = Math.atan2(y,x);
 
     if (brng < 0) 
-    	return 2 * Math.PI + brng;
+      return 2 * Math.PI + brng;
     else return brng;
 
   },
