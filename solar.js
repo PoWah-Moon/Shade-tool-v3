@@ -1982,6 +1982,12 @@ solar.prototype = {
 
 }
 var panelTypes = {
+  p260: {
+    name: 260,
+    panelWidth: 3.25,
+    panelHeight: 5.41,
+    panelGap: 0.0833962
+  },
   p275: {
     name: 275,
     panelWidth: 3.28,

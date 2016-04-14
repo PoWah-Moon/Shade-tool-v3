@@ -36,6 +36,7 @@
 <div id="ddPanel"><div class="dvText">Select Panel Type</div>
 	<div class="arrow-down floatRight"><span class="spnArrowDown"></span></div>
 	<div class = "dropDownOptionsDiv" id="myddOptsPanel" style="display:block">
+        	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p260');">Trina 260</div>
         	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p275');">SolarWorld 275</div>
     		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p280');">SolarWorld 280</div>
     		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p285');">SolarWorld 285</div>
@@ -50,9 +51,9 @@
 		<span id="spnOK">OK<!--<img src="/Images/search.png"></img>--></span>	
 	</button></div>
 </div>
-<div id="infoConfirm"><div>Create this Array?</div><div>(You can reposition, drag the corners of the array </div><div>before clicking Yes)</div>
+<div id="infoConfirm" class="moveLeft"><div class="moveLeft">Create this Array?</div><div class="moveLeft">(You can reposition, drag the corners of the array </div><div class="moveLeft">before clicking Yes)</div>
 	
-	<div><button id="btnYes" onclick="javascript:s.getDetails()">
+	<div class="moveLeft"><button id="btnYes" onclick="javascript:s.getDetails()">
 		<span id="spnYes">Yes<!--<img src="/Images/search.png"></img>--></span>	
 	</button><button id="btnNo" onclick="javascript:s.closeAndReset();" class="marginLeft10">
 		<span id="spnNo">No<!--<img src="/Images/search.png"></img>--></span>	
@@ -113,12 +114,12 @@
 </div>
 
 <div id="dvCircleTrees">
-	<div>Circle the tree and then click OK</div>
+	<div>Circle the tree and then click FINISH</div>
 
 		
 	<div style="text-align:center;">
 		<button id="btnCircleTree" onclick="javascript:s.drawCircle();s.setControlforTrees();" class="marginLeft10">
-			<span id="spnCircleTree">OK</span>
+			<span id="spnCircleTree">FINISH</span>
 		</button>	
 		
 	</div>
