@@ -285,6 +285,11 @@ button:hover{cursor:pointer !important;}
 .width48{width:48%;}
 #btnSave{width:90px;}
 
+.moveLeft {
+	position: relative;
+	left: 10px;
+	top: 50px;
+}
 
 /*Auto complete*/
 .controls {
