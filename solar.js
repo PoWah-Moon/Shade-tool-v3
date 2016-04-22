@@ -956,13 +956,13 @@ solar.prototype = {
     this.setDisplay("ddPanel");
     this.setDisplay("optAdd");
   },
-  showAddDialog: function() {
-    this.chkCoordinates = [];
-    var control = $("#infoAdd");
-    this.calculatePosition(control);
-    this.setDisplay('infoAdd');
+  showAddDialog: function() { // Called by Add an array
+    this.chkCoordinates = []; // global variable 
+    var control = $("#infoAdd"); //jQuery: send it back to html? 
+    this.calculatePosition(control); //CSS style adjustment?
+    this.setDisplay('infoAdd'); // Send info back to HTML 
   },
-  closeAndReset: function() {
+  closeAndReset: function() { // Discard array that has just been drawn
     var control = $("#dvDetails");
     this.setDisplay('infoConfirm');
     this.chkCoordinates = [];
@@ -1550,31 +1550,8 @@ solar.prototype = {
     var crcl = s.detailsCircle[circleIndex];
     crcl.Include = true;
     // update EstimatedShading
-    var arrayNumber = s.arrayProp.length;
 
-    for(j = 0; j < arrayNumber; j++) {
-
-      var corner1 = s.arrayProp[j].corners[0];
-      var corner2 = s.arrayProp[j].corners[1];
-      var corner3 = s.arrayProp[j].corners[2];
-      var corner4 = s.arrayProp[j].corners[3];
-      var totIrradiance = s.arrayProp[j].totIrradiance;
-      var totDiffIrrad = s.arrayProp[j].totDiffIrrad;
-
-      // Do not calcuate the shading of this tree
-      s.arrayProp[j].treeAccount[circleIndex] = 1;
-      var treeAccount = s.arrayProp[j].treeAccount;
-
-      s.arrayProp[j].corners[0].SolarAccess = s.evaluateShading(corner1, totIrradiance, totDiffIrrad, treeAccount, j);
-      s.arrayProp[j].corners[1].SolarAccess = s.evaluateShading(corner2, totIrradiance, totDiffIrrad, treeAccount, j);
-      s.arrayProp[j].corners[2].SolarAccess = s.evaluateShading(corner3, totIrradiance, totDiffIrrad, treeAccount, j);
-      s.arrayProp[j].corners[3].SolarAccess = s.evaluateShading(corner4, totIrradiance, totDiffIrrad, treeAccount, j);
-      
-      var avgArraySA = Math.round((s.arrayProp[j].corners[0].SolarAccess + s.arrayProp[j].corners[1].SolarAccess 
-        + s.arrayProp[j].corners[2].SolarAccess + s.arrayProp[j].corners[3].SolarAccess)/4);
-
-      s.EstimatedShading[j] = avgArraySA; 
-    }
+    s.treeAndShade(circleIndex, 1, 0);
 
     $("#btnInclude" + circleIndex).removeClass('Exclude');
     $("#btnExclude" + circleIndex).removeClass('Include');
@@ -1585,9 +1562,18 @@ solar.prototype = {
   setExclude: function(circleIndex) {
     var crcl = s.detailsCircle[circleIndex];
     crcl.Include = false;
-    var arrayNumber = s.arrayProp.length;
 
-    for(j = 0; j < arrayNumber; j++) {
+    s.treeAndShade(circleIndex, 0, 0);
+    
+    $("#btnInclude" + circleIndex).removeClass('Include');
+    $("#btnExclude" + circleIndex).removeClass('Exclude');
+    $("#btnInclude" + circleIndex).addClass('Exclude');
+    $("#btnExclude" + circleIndex).addClass('Include');
+
+  },
+    treeAndShade: function(circleIndex, shadedQ, deleteQ) {
+
+      for(j = 0; j < s.arrayProp.length; j++) {
 
       var corner1 = s.arrayProp[j].corners[0];
       var corner2 = s.arrayProp[j].corners[1];
@@ -1596,9 +1582,23 @@ solar.prototype = {
       var totIrradiance = s.arrayProp[j].totIrradiance;
       var totDiffIrrad = s.arrayProp[j].totDiffIrrad;
 
-      // Do not calcuate the shading of this tree
-      s.arrayProp[j].treeAccount[circleIndex] = 0;
-      var treeAccount = s.arrayProp[j].treeAccount;
+      // Different operation if we wish to delete tree
+      if (deleteQ) {
+
+        s.arrayProp[j].treeAccount.splice(circleIndex, 1);
+        s.arrayProp[j].corners[0].shadingTree.splice(circleIndex, 1);
+        s.arrayProp[j].corners[1].shadingTree.splice(circleIndex, 1);
+        s.arrayProp[j].corners[2].shadingTree.splice(circleIndex, 1);
+        s.arrayProp[j].corners[3].shadingTree.splice(circleIndex, 1);
+
+        var treeAccount = s.arrayProp[j].treeAccount;
+
+      } else { // Recalculate shading if we include/exclude tree
+
+        s.arrayProp[j].treeAccount[circleIndex] = shadedQ;
+        var treeAccount = s.arrayProp[j].treeAccount;
+
+      }
 
       s.arrayProp[j].corners[0].SolarAccess = s.evaluateShading(corner1, totIrradiance, totDiffIrrad, treeAccount, j);
       s.arrayProp[j].corners[1].SolarAccess = s.evaluateShading(corner2, totIrradiance, totDiffIrrad, treeAccount, j);
@@ -1611,12 +1611,6 @@ solar.prototype = {
       s.EstimatedShading[j] = avgArraySA; 
 
     }
-    
-    $("#btnInclude" + circleIndex).removeClass('Include');
-    $("#btnExclude" + circleIndex).removeClass('Exclude');
-    $("#btnInclude" + circleIndex).addClass('Exclude');
-    $("#btnExclude" + circleIndex).addClass('Include');
-
   },
   chkForCircleEdit: function(circleIndex) {
     var crcl = this.detailsCircle[circleIndex - 1];
@@ -1644,10 +1638,6 @@ and shifts the rest of the trees to reflect the deletion. */
     crcl.setMap(null);
     crcl = null;
 
-    for (i = 0; i < s.arrayProp.length; i++) {
-      s.arrayProp[i].treeAccount[circleIndex] = 0;  
-    } 
-
     /* Delete the numbered marker associated with the tree */
     s.aoTreeMarkers[circleIndex].setMap(null);
     s.aoTreeMarkers.splice(circleIndex,1);
@@ -1656,6 +1646,8 @@ and shifts the rest of the trees to reflect the deletion. */
     /* Update the labels of all other markers */
     for(var j = circleIndex; j < s.aoTreeMarkers.length; j++)
         s.aoTreeMarkers[j].setLabel((j+1).toString());
+
+    s.treeAndShade(circleIndex, 0, 1);
 
     s.generateDiv();
   },
