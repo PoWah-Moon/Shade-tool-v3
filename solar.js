@@ -1654,7 +1654,7 @@ and shifts the rest of the trees to reflect the deletion. */
     s.labelIndex--;
 
     /* Update the labels of all other markers */
-    for(var j = circleIndex; circleIndex < s.aoTreeMarkers.length; j++)
+    for(var j = circleIndex; j < s.aoTreeMarkers.length; j++)
         s.aoTreeMarkers[j].setLabel((j+1).toString());
 
     s.generateDiv();
