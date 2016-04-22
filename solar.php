@@ -36,11 +36,7 @@
 <div id="ddPanel"><div class="dvText">Select Panel Type</div>
 	<div class="arrow-down floatRight"><span class="spnArrowDown"></span></div>
 	<div class = "dropDownOptionsDiv" id="myddOptsPanel" style="display:block">
-<<<<<<< HEAD
         	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p260');">Trina 260</div>
-=======
-			<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p260');">Trina 260</div>
->>>>>>> origin/master
         	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p275');">SolarWorld 275</div>
     		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p280');">SolarWorld 280</div>
     		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p285');">SolarWorld 285</div>
