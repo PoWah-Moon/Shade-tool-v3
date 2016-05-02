@@ -51,9 +51,9 @@
 		<span id="spnOK">OK<!--<img src="/Images/search.png"></img>--></span>	
 	</button></div>
 </div>
-<div id="infoConfirm" class="moveLeft"><div class="moveLeft">Create this Array?</div><div class="moveLeft">(You can reposition, drag the corners of the array </div><div class="moveLeft">before clicking Yes)</div>
+<div id="infoConfirm"><div>Create this Array?</div><div>(You can reposition, drag the corners of the array </div><div>before clicking Yes)</div>
 	
-	<div class="moveLeft"><button id="btnYes" onclick="javascript:s.getDetails()">
+	<div><button id="btnYes" onclick="javascript:s.getDetails()">
 		<span id="spnYes">Yes<!--<img src="/Images/search.png"></img>--></span>	
 	</button><button id="btnNo" onclick="javascript:s.closeAndReset();" class="marginLeft10">
 		<span id="spnNo">No<!--<img src="/Images/search.png"></img>--></span>	

@@ -561,10 +561,10 @@ solar.prototype = {
 
     var treeNumber = s.detailsCircle.length;
     for(k = 0; k < treeNumber; k++) {
-      corner1.shadingTree.push(s.treeEqn(corner1, arrayDetails, k, arrayNumber));
-      corner2.shadingTree.push(s.treeEqn(corner2, arrayDetails, k, arrayNumber)); 
-      corner3.shadingTree.push(s.treeEqn(corner3, arrayDetails, k, arrayNumber)); 
-      corner4.shadingTree.push(s.treeEqn(corner4, arrayDetails, k, arrayNumber));
+      corner1.shadingTree.push(s.treeEqn(corner1, arrayDetails, k));
+      corner2.shadingTree.push(s.treeEqn(corner2, arrayDetails, k)); 
+      corner3.shadingTree.push(s.treeEqn(corner3, arrayDetails, k)); 
+      corner4.shadingTree.push(s.treeEqn(corner4, arrayDetails, k));
     }
 
     // Create a counter called treeAccount that determines which tree is 
@@ -625,7 +625,7 @@ solar.prototype = {
 
   },
 
-  treeEqn: function(corner, arrayDetails, treeNum, arrayNum) {  
+  treeEqn: function(corner, arrayDetails, treeNum) {  
    
     if (corner.qEave == 1) {
       var hPoint = arrayDetails.hEave;
@@ -706,10 +706,10 @@ solar.prototype = {
       // Find out how the new tree affects each corner
 
       // there is no such equation called treeEqn!!!----------------------------//
-      corner1.shadingTree.push(s.treeEqn(corner1, s.arrayProp[i], treeNum, i));
-      corner2.shadingTree.push(s.treeEqn(corner2, s.arrayProp[i], treeNum, i)); 
-      corner3.shadingTree.push(s.treeEqn(corner3, s.arrayProp[i], treeNum, i)); 
-      corner4.shadingTree.push(s.treeEqn(corner4, s.arrayProp[i], treeNum, i));
+      corner1.shadingTree.push(s.treeEqn(corner1, s.arrayProp[i], treeNum));
+      corner2.shadingTree.push(s.treeEqn(corner2, s.arrayProp[i], treeNum)); 
+      corner3.shadingTree.push(s.treeEqn(corner3, s.arrayProp[i], treeNum)); 
+      corner4.shadingTree.push(s.treeEqn(corner4, s.arrayProp[i], treeNum));
 
       arrayDetails.treeAccount.push(1);
 
@@ -1321,8 +1321,8 @@ solar.prototype = {
     var control = $("#dvTrees");
     this.calculatePosition(control);
     this.setDisplay('dvTrees');
-    if (!(s.detailsCircle !== null && s.detailsCircle !== "undefined")) {
-      s.EsitmatedShading = 100; // 100% if there are no trees
+    if (s.detailsCircle == "") {
+      s.EstimatedShading.push(100); // 100% if there are no trees
     } else {
 
       if (s.isAddTree)
