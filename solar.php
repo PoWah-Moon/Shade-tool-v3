@@ -5,7 +5,8 @@
 <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
 <script src="jquery-2.1.3.min.js"></script>
 
-<script src="solar.js"></script>
+<script src="Js/solar.js"></script>
+
 <title>Solar</title>
 </head>
 
@@ -36,18 +37,16 @@
 <div id="ddPanel"><div class="dvText">Select Panel Type</div>
 	<div class="arrow-down floatRight"><span class="spnArrowDown"></span></div>
 	<div class = "dropDownOptionsDiv" id="myddOptsPanel" style="display:block">
-        	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p260');">Trina 260</div>
-        	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p275');">SolarWorld 275</div>
+        	<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p270');">SolarWorld 270</div>
     		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p280');">SolarWorld 280</div>
-    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p285');">SolarWorld 285</div>
-    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p320');">SolarWorld 315 (C)</div>    
+    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p325');">SolarWorld 325 (commercial)</div>    		<div class = "dropDownItemDiv" id="optPanelType" onclick="javascript:s.selPanelType('p365');">LG 365</div>
 	</div>	
 	
 </div>
 
 <div id="infoAdd">Click four corners of the array.<br>Be sure to trace the roof eave first.
 	
-	<div><button id="btnOK" onclick="javascript:s.drawPolygon();">
+	<div><button id="btnOK" onclick="javascript:s.drawPolygon(true);">
 		<span id="spnOK">OK<!--<img src="/Images/search.png"></img>--></span>	
 	</button></div>
 </div>
@@ -113,21 +112,44 @@
 	
 </div>
 
+<div id="dvTypeTrees">
+    <div class="dvText">Select Tree Type</div>
+    <div class="arrow-down floatRight"><span class="spnArrowDown"></span></div>
+    <div class="dropDownOptionsDiv" id="myddOptsTrees" style="display:block">
+        <div class="dropDownItemDiv" onclick="javascript:s.selTreeType('S');">Sphere On Stick</div>
+        <div class="dropDownItemDiv" onclick="javascript:s.selTreeType('B');">Block Of Trees</div>        
+    </div>
+
+</div>
+
 <div id="dvCircleTrees">
-	<div>Circle the tree and then click FINISH</div>
+	<div>Circle the tree and then click OK</div>
 
 		
 	<div style="text-align:center;">
-		<button id="btnCircleTree" onclick="javascript:s.drawCircle();s.setControlforTrees();" class="marginLeft10">
-			<span id="spnCircleTree">FINISH</span>
+		<button id="btnCircleTree" onclick="javascript:s.drawCircle();s.setControlforSphere(false);" class="marginLeft10">
+			<span id="spnCircleTree">OK</span>
 		</button>	
 		
 	</div>
 
 	
 </div>
+    <div id="dvBlockTrees">
+        <div>Draw the tree and then click OK</div>
+
+
+        <div style="text-align:center;">
+            <button id="btnBlockTree" onclick="javascript:s.drawBlock();" class="marginLeft10">
+                <span id="spnCircleTree">OK</span>
+            </button>
+
+        </div>
+
+
+    </div>
 <div id="dvEstimatedShading">
-	<div>The estimated shading is: <span id="spnShading"></span></div>
+	<div>The estimated shading is:<span id="spnShading"></span></div>
 	<div style="text-align:center;">
 		<button id="btnShading" onclick="javascript:s.confirmShading();" class="marginLeft10">
 			<span id="spnCircleTree">OK</span>
@@ -138,12 +160,13 @@
 
 </div>
 <div id="dvTreeHeight">
-	<div style="width:83%" class="dvFloatLeft">Provide the height of the tree in feet</div>
+	<div style="width:83%" class="dvFloatLeft">Provide the height of the tree in inches</div>
 	
-	<div style="width:15%" class="dvFloatLeft"><input type="text" id="txtTreeHeight" maxlength="4" style="width:80%"/></div>
-	<div style="width:83%;margin-top:2px;" class="dvFloatLeft">Provide the height of the building in feet</div>
+	<div style="width:15%"class="dvFloatLeft"><input type="text" id="txtTreeHeight" maxlength="4" style="width:80%"/></div>
+	<div style="width:83%;margin-top:2px;" class="dvFloatLeft">Provide the height of the building in inches</div>
 	
-	<div style="width:15%;margin-top:2px;"class="dvFloatLeft"><input type="text" id="txtBuildingHeight" maxlength="4" style="width:80%"/></div>	
+	<div style="width:15%;margin-top:2px;"class="dvFloatLeft"><input type="text" id="txtBuildingHeight" maxlength="4" style="width:80%"/></div>
+		
 	<div style="text-align:center;width:100%" class="dvFloatLeft">
 		<button id="btnHeightTree" onclick="javascript:s.setTreeHeight();" class="marginLeft10">
 			<span id="spnHeightTree">OK</span>
